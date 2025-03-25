@@ -5,7 +5,8 @@ import connectDB from "./config/db.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import adminAuthRoutes from "./routes/adminAuthRoutes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
-import { loginAdmin } from "./controllers/adminAuthController.js";
+import authMiddleware from "./middlewares/adminAuthMiddleware.js";
+
 
 // Load environment variables
 dotenv.config();
@@ -22,7 +23,7 @@ app.use(express.json()); // Parse JSON requests
 
 // Routes
 app.use("/api/admin-auth", adminAuthRoutes);
-app.use("/api/admin", loginAdmin, adminRoutes);
+app.use("/api/admin", authMiddleware, adminRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);
