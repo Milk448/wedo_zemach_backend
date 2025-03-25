@@ -2,11 +2,10 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
-import blogRoutes from "./routes/blogRoutes.js";
-import eventRoutes from "./routes/eventRoutes.js";
-import membershipRoutes from "./routes/membershipRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import adminAuthRoutes from "./routes/adminAuthRoutes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
+import { loginAdmin } from "./controllers/adminAuthController.js";
 
 // Load environment variables
 dotenv.config();
@@ -22,7 +21,8 @@ app.use(cors());
 app.use(express.json()); // Parse JSON requests
 
 // Routes
-app.use("/api/admin", adminRoutes);
+app.use("/api/admin-auth", adminAuthRoutes);
+app.use("/api/admin", loginAdmin, adminRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);
