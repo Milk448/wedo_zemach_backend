@@ -1,54 +1,22 @@
-import Admin from "../models/Admin.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import Blog from "../models/Blog.js";
 
-// Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
-};
-
-// Admin Login
-export const loginAdmin = async (req, res) => {
-  const { email, password } = req.body;
-
+// Create Blog Post
+export const createBlog = async (req, res) => {
   try {
-    const admin = await Admin.findOne({ email });
-
-    if (admin && (await bcrypt.compare(password, admin.password))) {
-      res.json({
-        _id: admin._id,
-        name: admin.name,
-        email: admin.email,
-        token: generateToken(admin._id),
-      });
-    } else {
-      res.status(401).json({ message: "Invalid credentials" });
-    }
+    const { title, content, author } = req.body;
+    const newPost = await Blog.create({ title, content, author });
+    res.status(201).json(newPost);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Failed to create blog", error: error.message });
   }
 };
 
-// Create New Admin
-export const createAdmin = async (req, res) => {
-  const { name, email, password } = req.body;
-
+// Get All Blogs
+export const getAllBlogs = async (req, res) => {
   try {
-    const existingAdmin = await Admin.findOne({ email });
-
-    if (existingAdmin) {
-      return res.status(400).json({ message: "Admin already exists" });
-    }
-
-    const admin = await Admin.create({ name, email, password });
-
-    res.status(201).json({
-      _id: admin._id,
-      name: admin.name,
-      email: admin.email,
-      token: generateToken(admin._id),
-    });
+    const blogs = await Blog.find();
+    res.status(200).json(blogs);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Failed to fetch blogs", error: error.message });
   }
 };

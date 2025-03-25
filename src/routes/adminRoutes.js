@@ -1,9 +1,10 @@
 import express from "express";
-import { loginAdmin, createAdmin } from "../controllers/adminController.js";
+import { createBlog, getAllBlogs } from "../controllers/adminController.js";
 
 const router = express.Router();
 
-router.post("/login", loginAdmin);
-router.post("/register", createAdmin); // For initial admin setup
+// Protected Routes (Require Authentication)
+router.post("/blog", createBlog);
+router.get("/blogs", getAllBlogs);
 
 export default router;
